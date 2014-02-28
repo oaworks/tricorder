@@ -1,0 +1,166 @@
+#
+# Copyright (c) 2005 Richard Cameron, CiteULike.org
+# All rights reserved.
+#
+# This code is derived from software contributed to CiteULike.org
+# by
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. All advertising materials mentioning features or use of this software
+#    must display the following acknowledgement:
+#        This product includes software developed by
+#		 CiteULike <http://www.citeulike.org> and its
+#		 contributors.
+# 4. Neither the name of CiteULike nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY CITEULIKE.ORG AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+
+# Each plugin needs a description so the driver can advertise the details
+# to the users on the site
+plugin {
+	# Integer version number for the plugin code. When this number is incremented,
+	# CiteULike may reparse all existing articles with the new code.
+	version {2}
+
+	# The name of the plugin, as displayed on the "CiteULike supports..." page
+	name {ScienceDirect}
+
+	# The link the front page of this service
+	url {http://www.sciencedirect.com}
+
+	# Any additional information which needs to be displayed to the user.
+	# E.g. "Experimental support"
+	blurb {}
+
+	# Your name
+	author {Richard Cameron}
+
+	# Your email address
+	email {camster@citeulike.org}
+
+	# Language you wrote the plugin in
+	language {python}
+
+	# Regular expression to match URLs that the plugin is
+	# *potentially* interested in. Any URL matching this regexp
+	# will cause your parser to be invoked. Currently, this will
+	# require fork()ing a process, so you should try to reduce the number
+	# of false positives by making your regexp as restrictive as possible.
+	#
+	# If it is not possible to determine whether or not your plugin is
+	# interested purely on the basis of the URL, you will have a chance
+	# to refine this decision in your code. For now, try to make a reasonable
+	# approximation - like, check for URLs on the right hostname
+	#
+	# Note: Some universities provide mirrors of commericial publishers' sites
+	# with different hostnames, so you should provide some leeway in your
+	# regexp if that applies to you.
+	#
+	# Nature have two styles of URLs for their articles.. they seem to be slowly
+	# moving to the second.
+	regexp {http://[^/]*sciencedirect.com[^/]*/science(\?_ob|/article)}
+}
+
+
+#
+# Linkout formatting
+#
+
+# CiteULike doesn't store URLs for articles.
+# Instead it stores the raw ingredients required to build the dynamically.
+# Each plugin is required to define a small procedure which does this formatting
+# See the HOWTO file for more details.
+#
+# The variables following variables are defined for your use
+# in the function: type ikey_1 ckey_1 ikey_2 ckey_2
+#
+format_linkout SD {
+	return [list ScienceDirect "http://www.sciencedirect.com/science/article/$ckey_1"]
+}
+
+# It seems there's no universal PII resolver - the elsevier one is just for elsevier registered ones.
+#format_linkout EVPII {
+#	return [list ElsevierPII "http://linkinghub.elsevier.com/retrieve/pii/$ckey_1"]
+#}
+
+
+#
+# TESTS
+#
+
+# Each plugin MUST provide a set of tests. The motivation behind this is
+# that web scraping code is inherently fragile, and is likely to break whenever
+# the provider decides to redisign their site. CiteULike will periodically
+# run tests to see if anything has broken.
+
+# Please provide as comprehensive a set of tests as possible.
+# If you ever fix a bug in the parser, it is highly recommended that
+# you add the offending page as a test case.
+
+test {http://www.sciencedirect.com/science?_ob=ArticleURL&_udi=B6TVK-40X8HYB-2&_user=10&_coverDate=09/01/2000&_rdoc=1&_fmt=high&_orig=search&_origin=search&_sort=d&_docanchor=&view=c&_acct=C000050221&_version=1&_urlVersion=0&_userid=10&md5=531972b99745c81a5807ce96b839fe5a&searchtype=a} {
+	formatted_url {DOI http://dx.doi.org/10.1016/S0167-2789(00)00094-4}
+	linkout {DOI {} 10.1016/S0167-2789(00)00094-4 {} {}}
+	linkout {EVPII {} S0167-2789(00)00094-4 {} {}}
+	year 2000
+	type JOUR
+	start_page 1
+	end_page 20
+	volume 143
+	plugin_version 2
+	pub_id_type pii
+	doi 10.1016/S0167-2789(00)00094-4
+	day 1
+	issue 1-4
+	title {From Kuramoto to Crawford: exploring the onset of synchronization in populations of coupled oscillators}
+	journal {Physica D: Nonlinear Phenomena}
+	pub_id S0167-2789(00)00094-4
+	abstract {The Kuramoto model describes a large population of coupled limit-cycle oscillators whose natural frequencies are drawn from some prescribed distribution. If the coupling strength exceeds a certain threshold, the system exhibits a phase transition: some of the oscillators spontaneously synchronize, while others remain incoherent. The mathematical analysis of this bifurcation has proved both problematic and fascinating. We review 25 years of research on the Kuramoto model, highlighting the false turns as well as the successes, but mainly following the trail leading from Kuramoto’s work to Crawford’s recent contributions. It is a lovely winding road, with excursions through mathematical biology, statistical physics, kinetic theory, bifurcation theory, and plasma physics.}
+	issn 01672789
+	author {Strogatz {} S {Strogatz, S}}
+	month 9
+	status ok
+}
+
+test {http://www.sciencedirect.com/science?_ob=ArticleURL&_udi=B8CWT-4ST2RTK-H&_user=10&_rdoc=1&_fmt=&_orig=search&_sort=d&view=c&_acct=C000050221&_version=1&_urlVersion=0&_userid=10&md5=ccc8bb47c33c3cdf76706c7fd04e63bf} {
+	formatted_url {DOI http://dx.doi.org/10.1016/S1872-2423(08)00007-0}
+	linkout {DOI {} 10.1016/S1872-2423(08)00007-0 {} {}}
+	linkout {EVPII {} S1872242308000070 {} {}}
+	year 2008
+	type CHAP
+	volume 2
+	start_page 249
+	end_page 281
+	pub_id_type pii
+	title_series {Advances in Experimental Biology}
+	doi {10.1016/S1872-2423(08)00007-0}
+	title {Systems toxicology: using the systems biology approach to assess chemical pollutants in the environment}
+	title_secondary {Comparative Toxicogenomics}
+	pub_id S1872242308000070
+	abstract {There are many complex problems in environmental toxicology that we have historically not been able to resolve in a satisfactory quantitative manner. These complexities include the effects of mixtures of pollutants, complex exposure profiles, or the complex responses of organisms or ecosystems over different timescales. The cell biology community, along with mathematicians developed the ‘Systems Biology’ concept. This is a modelling tool that was developed to understand and predict how complex biological process at the cellular, and sub-cellular level, work. It is also theoretically possible to apply this systems approach to toxicology, called ‘Systems Toxicology’. This discipline is in its infancy. Historic concepts in the control of biological systems are outlined, and how these relate to the modern concept of systems biology. We then describe systems toxicology and its application to environmental pollution. System toxicology involves the input of data into computer modelling techniques, which use mostly differential equations, models of networks, or cellular automata theory. The input data can be biological information from organisms exposed to pollutants. These inputs could be data from the ‘omics, or traditional biochemical or physiological effects data. The input data must also include environmental chemistry data sets and quantitative information on ecosystems so that geochemistry, toxicology, and ecology can be modelled together. The outputs could include complex descriptions of how organisms and ecosystems respond to chemicals or other pollutants and the inter-relationships with the many other environmental variables involved. The model outputs could be at the cellular level, organ, organism, or ecosystem level. Ecologically relevant outputs could be achieved (‘systems ecotoxicology’), provided environmental variability is considered in the modelling. Systems toxicology is potentially a very powerful tool, but a number of practical issues remain to be resolved such as the creation and quality assurance of databases for environmental pollutants and their effects, as well as user-friendly software that uses ecological or ecotoxicological parameters and terminology.}
+	issn 18722423
+	author {Handy Richard RD {Handy, Richard D.}}
+	isbn 9780444532749
+	publisher Elsevier
+	status ok
+}
+

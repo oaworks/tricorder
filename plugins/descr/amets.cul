@@ -1,0 +1,395 @@
+#
+# Copyright (c) 2005 Richard Cameron, CiteULike.org
+# Copyright (c) 2005 Dan Hodson, d.l.r.hodson@reading.ac.uk
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. All advertising materials mentioning features or use of this software
+#    must display the following acknowledgement:
+#        This product includes software developed by
+#		 CiteULike <http://www.citeulike.org> and its
+#		 contributors.
+# 4. Neither the name of CiteULike nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY CITEULIKE.ORG AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+
+# Each plugin needs a description so the driver can advertise the details
+# to the users on the site
+plugin {
+	# Integer version number for the plugin code. When this number is incremented,
+	# CiteULike may reparse all existing articles with the new code.
+	version {2}
+
+	# The name of the plugin, as displayed on the "CiteULike supports..." page
+	name {American Meteorological Society Journals}
+
+	# The link the front page of this service
+	url {http://journals.ametsoc.org/}
+
+	# Any additional information which needs to be displayed to the user.
+	# E.g. "Experimental support"
+	blurb {Experimental Support}
+
+	# Your name
+	author {Dan Hodson}
+
+	# Your email address
+	email {d.l.r.hodson@reading.ac.uk}
+
+	# Language you wrote the plugin in
+	language {python}
+
+
+	# Regular expression to match URLs that the plugin is
+	# *potentially* interested in. Any URL matching this regexp
+	# will cause your parser to be invoked. Currently, this will
+	# require fork()ing a process, so you should try to reduce the number
+	# of false positives by making your regexp as restrictive as possible.
+	#
+	# If it is not possible to determine whether or not your plugin is
+	# interested purely on the basis of the URL, you will have a chance
+	# to refine this decision in your code. For now, try to make a reasonable
+	# approximation - like, check for URLs on the right hostname
+	#
+	# Note: Some universities provide mirrors of commericial publishers' sites
+	# with different hostnames, so you should provide some leeway in your
+	# regexp if that applies to you.
+	#
+
+	regexp {(journals.ametsoc.org/doi/)}
+}
+#
+# Linkout formatting
+#
+
+# CiteULike doesn't store URLs for articles.
+# Instead it stores the raw ingredients required to build the dynamically.
+# Each plugin is required to define a small procedure which does this formatting
+# See the HOWTO file for more details.
+#
+# The variables following variables are defined for your use
+# in the function: type ikey_1 ckey_1 ikey_2 ckey_2
+#
+
+format_linkout AMETS {#
+
+        return [list AMETS "http://journals.ametsoc.org/doi/abs/${ckey_1}"]
+}
+
+
+#
+# TESTS
+#
+
+# Each plugin MUST provide a set of tests. The motivation behind this is
+# that web scraping code is inherently fragile, and is likely to break whenever
+# the provider decides to redisign their site. CiteULike will periodically
+# run tests to see if anything has broken.
+
+# Please provide as comprehensive a set of tests as possible.
+# If you ever fix a bug in the parser, it is highly recommended that
+# you add the offending page as a test case.
+
+
+
+#Tests for the journals of the American Meterological Society
+#1) Journal of Atmospheric Science
+#2)Journal of Applied Meteorology and Climatology
+#3) Journal of Physical Oceanography
+#4)Monthly Weather Review
+#5) Journal of Atmospheric and Oceanic Technology
+#6) Weather and Forecasting
+#7) Journal of Climate
+#8) Journal of Hydrometeorology
+#9) Bulletin of the American Meteorological Society
+#10) Weather, Climate, and Societ
+#11) Earth Interactions
+
+#7) Meteorological Monographs
+
+
+
+test {http://journals.ametsoc.org/doi/abs/10.1175/2009JAS3044.1} {
+	serial {0022-4928}
+	volume {67}
+	linkouts {{DOI {} 10.1175/2009JAS3044.1 {} {}}}
+	year {2010}
+	type {JOUR}
+	start_page {881}
+	url {http://journals.ametsoc.org/}
+	end_page {897}
+	plugin_version {2}
+	day {1}
+	publisher {American Meteorological Society}
+	issue {4}
+	title {A Density Current Parameterization Coupled with Emanuel’s Convection Scheme. Part I: The Models}
+	journal {Journal of the Atmospheric Sciences}
+	status {ok}
+	month {4}
+author {Grandpeix Jean-Yves J {Grandpeix, Jean-Yves}}
+author {Lafore Jean-Philippe J {Lafore, Jean-Philippe}}
+	plugin {amets}
+	formatted_url {DOI http://dx.doi.org/10.1175/2009JAS3044.1}
+}
+
+test {http://journals.ametsoc.org/doi/abs/10.1175/2009JAMC2135.1} {
+	serial {1558-8424}
+	volume {49}
+	linkouts {{DOI {} 10.1175/2009JAMC2135.1 {} {}}}
+	year {2010}
+	type {JOUR}
+	start_page {557}
+	url {http://journals.ametsoc.org/}
+	end_page {573}
+	plugin_version {2}
+	day {1}
+	publisher {American Meteorological Society}
+	issue {4}
+	title {Toward Understanding the Value of Climate Information for Multiobjective Reservoir Management under Present and Future Climate and Demand Scenarios}
+	journal {Journal of Applied Meteorology and Climatology}
+	status {ok}
+	month {4}
+author {Graham Nicholas NE {Graham, Nicholas E.}}
+author {Georgakakos Konstantine KP {Georgakakos, Konstantine P.}}
+	plugin {amets}
+	formatted_url {DOI http://dx.doi.org/10.1175/2009JAMC2135.1}
+}
+
+test {http://journals.ametsoc.org/doi/abs/10.1175/2009JPO4174.1} {
+	serial {0022-3670}
+	volume {40}
+	linkouts {{DOI {} 10.1175/2009JPO4174.1 {} {}}}
+	year {2010}
+	type {JOUR}
+	start_page {845}
+	url {http://journals.ametsoc.org/}
+	end_page {864}
+	plugin_version {2}
+	day {1}
+	publisher {American Meteorological Society}
+	issue {5}
+	title {Circulation and Water Mass Modification in the Brazil–Malvinas Confluence}
+	journal {Journal of Physical Oceanography}
+	status {ok}
+	month {5}
+author {Jullion Loic L {Jullion, Loic}}
+author {Heywood Karen KJ {Heywood, Karen J.}}
+author {{Naveira Garabato} Alberto AC {Naveira Garabato, Alberto C.}}
+author {Stevens David DP {Stevens, David P.}}
+	plugin {amets}
+	formatted_url {DOI http://dx.doi.org/10.1175/2009JPO4174.1}
+}
+
+test {http://journals.ametsoc.org/doi/abs/10.1175/2009MWR2921.1} {
+	serial {0027-0644}
+	volume {138}
+	linkouts {{DOI {} 10.1175/2009MWR2921.1 {} {}}}
+	year {2010}
+	type {JOUR}
+	start_page {645}
+	url {http://journals.ametsoc.org/}
+	end_page {662}
+	plugin_version {2}
+	day {1}
+	publisher {American Meteorological Society}
+	issue {3}
+	title {Effects of Vertical Wind Shear on Tropical Cyclone Precipitation}
+	journal {Monthly Weather Review}
+	status {ok}
+	month {3}
+author {Wingo Matthew MT {Wingo, Matthew T.}}
+author {Cecil Daniel DJ {Cecil, Daniel J.}}
+	plugin {amets}
+	formatted_url {DOI http://dx.doi.org/10.1175/2009MWR2921.1}
+}
+
+test {http://journals.ametsoc.org/doi/abs/10.1175/2009JTECHA1359.1} {
+	serial {0739-0572}
+	volume {27}
+	linkouts {{DOI {} 10.1175/2009JTECHA1359.1 {} {}}}
+	year {2010}
+	type {JOUR}
+	start_page {617}
+	url {http://journals.ametsoc.org/}
+	end_page {636}
+	plugin_version {2}
+	day {1}
+	publisher {American Meteorological Society}
+	issue {4}
+	title {Impacts of Beam Broadening and Earth Curvature on Storm-Scale 3D Variational Data Assimilation of Radial Velocity with Two Doppler Radars}
+	journal {Journal of Atmospheric and Oceanic Technology}
+	status {ok}
+	month {4}
+author {Ge Guoqing G {Ge, Guoqing}}
+author {Gao Jidong J {Gao, Jidong}}
+author {Brewster Keith K {Brewster, Keith}}
+author {Xue Ming M {Xue, Ming}}
+	plugin {amets}
+	formatted_url {DOI http://dx.doi.org/10.1175/2009JTECHA1359.1}
+}
+
+test {http://journals.ametsoc.org/doi/abs/10.1175/2009WAF2222243.1} {
+	serial {0882-8156}
+	volume {25}
+	linkouts {{DOI {} 10.1175/2009WAF2222243.1 {} {}}}
+	year {2010}
+	type {JOUR}
+	start_page {5}
+	url {http://journals.ametsoc.org/}
+	end_page {19}
+	plugin_version {2}
+	day {1}
+	publisher {American Meteorological Society}
+	issue {1}
+	title {Global 4DVAR Assimilation and Forecast Experiments Using AMSU Observations over Land. Part I: Impacts of Various Land Surface Emissivity Parameterizations}
+	journal {Weather and Forecasting}
+	status {ok}
+	month {2}
+author {Karbou Fatima F {Karbou, Fatima}}
+author {Gérard Elisabeth E {Gérard, Elisabeth}}
+author {Rabier Florence F {Rabier, Florence}}
+	plugin {amets}
+	formatted_url {DOI http://dx.doi.org/10.1175/2009WAF2222243.1}
+}
+
+test {http://journals.ametsoc.org/doi/abs/10.1175/2009JCLI2735.1} {
+	serial {0894-8755}
+	volume {23}
+	linkouts {{DOI {} 10.1175/2009JCLI2735.1 {} {}}}
+	year {2010}
+	type {JOUR}
+	start_page {1957}
+	url {http://journals.ametsoc.org/}
+	end_page {1978}
+	plugin_version {2}
+	day {1}
+	publisher {American Meteorological Society}
+	issue {8}
+	title {Removing ENSO-Related Variations from the Climate Record}
+	journal {Journal of Climate}
+	status {ok}
+	month {4}
+author {Compo Gilbert GP {Compo, Gilbert P.}}
+author {Sardeshmukh Prashant PD {Sardeshmukh, Prashant D.}}
+	plugin {amets}
+	formatted_url {DOI http://dx.doi.org/10.1175/2009JCLI2735.1}
+}
+
+
+test {http://journals.ametsoc.org/doi/abs/10.1175/2009JHM1141.1} {
+	serial {1525-755X}
+	volume {11}
+	linkouts {{DOI {} 10.1175/2009JHM1141.1 {} {}}}
+	year {2010}
+	type {JOUR}
+	start_page {229}
+	url {http://journals.ametsoc.org/}
+	end_page {252}
+	plugin_version {2}
+	day {1}
+	publisher {American Meteorological Society}
+	issue {2}
+	title {Impacts of Historic Climate Variability on Seasonal Soil Frost in the Midwestern United States}
+	journal {Journal of Hydrometeorology}
+	status {ok}
+	month {4}
+author {Sinha Tushar T {Sinha, Tushar}}
+author {Cherkauer Keith KA {Cherkauer, Keith A.}}
+author {Mishra Vimal V {Mishra, Vimal}}
+	plugin {amets}
+	formatted_url {DOI http://dx.doi.org/10.1175/2009JHM1141.1}
+}
+
+test {http://journals.ametsoc.org/doi/abs/10.1175/2009BAMS2951.1} {
+	serial {0003-0007}
+	volume {91}
+	linkouts {{DOI {} 10.1175/2009BAMS2951.1 {} {}}}
+	year {2010}
+	type {JOUR}
+	start_page {451}
+	url {http://journals.ametsoc.org/}
+	end_page {454}
+	plugin_version {2}
+	day {1}
+	publisher {American Meteorological Society}
+	issue {4}
+	title {MODELING PROPOSAL: Coordinating Global Ocean Wave Climate Projections}
+	journal {Bulletin of the American Meteorological Society}
+	status {ok}
+	month {4}
+author {Hemer {} MA {Hemer, M. A.}}
+author {Wang {} XL {Wang, X. L.}}
+author {Church {} JA {Church, J. A.}}
+author {Swail {} VR {Swail, V. R.}}
+	plugin {amets}
+	formatted_url {DOI http://dx.doi.org/10.1175/2009BAMS2951.1}
+}
+
+
+test {http://journals.ametsoc.org/doi/abs/10.1175/2009WCAS1017.1} {
+	serial {1948-8335}
+	volume {2}
+	linkouts {{DOI {} 10.1175/2009WCAS1017.1 {} {}}}
+	year {2010}
+	type {JOUR}
+	start_page {9}
+	url {http://journals.ametsoc.org/}
+	end_page {22}
+	plugin_version {2}
+	day {1}
+	publisher {American Meteorological Society}
+	issue {1}
+	title {“A Persistent Truth”—Reflections on Drought Risk Management in Southern Africa}
+	journal {Weather, Climate, and Society}
+	status {ok}
+	month {1}
+author {Vogel Coleen C {Vogel, Coleen}}
+author {Koch Ingrid I {Koch, Ingrid}}
+author {{Van Zyl} Koos K {Van Zyl, Koos}}
+	plugin {amets}
+	formatted_url {DOI http://dx.doi.org/10.1175/2009WCAS1017.1}
+}
+
+test {http://journals.ametsoc.org/doi/abs/10.1175/2010EI267.1} {
+	serial {1087-3562}
+	volume {14}
+	linkouts {{DOI {} 10.1175/2010EI267.1 {} {}}}
+	year {2010}
+	type {JOUR}
+	start_page {1}
+	url {http://journals.ametsoc.org/}
+	end_page {26}
+	plugin_version {2}
+	day {1}
+	publisher {American Meteorological Society}
+	issue {3}
+	title {Intraseasonal Variability of Satellite-Derived Rainfall and Vegetation over Southern Africa}
+	journal {Earth Interactions}
+	status {ok}
+	month {4}
+author {Chikoore Hector H {Chikoore, Hector}}
+author {Jury Mark MR {Jury, Mark R.}}
+	plugin {amets}
+	formatted_url {DOI http://dx.doi.org/10.1175/2010EI267.1}
+}
+

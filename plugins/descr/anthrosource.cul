@@ -1,0 +1,167 @@
+#
+# Copyright (c) 2005 Christopher Kelty
+# All rights reserved.
+#
+
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. All advertising materials mentioning features or use of this software
+#    must display the following acknowledgement:
+#        This product includes software developed by
+#		 CiteULike <http://www.citeulike.org> and its
+#		 contributors.
+# 4. Neither the name of CiteULike nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY CITEULIKE.ORG AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+
+plugin {
+	# Integer version number for the plugin code. When this number is incremented,
+	# CiteULike may reparse all existing articles with the new code.
+	version {2}
+	# The name of the plugin, as displayed on the "CiteULike  supports..." page
+	name {Anthrosource}
+	# The link the front page of this service
+	url {http://www.anthrosource.net}
+	# Author Name
+	author {Christopher Kelty}
+	# Author email
+	email {info@kelty.org}
+	# Parser language
+	language {perl}
+	# Regular expression to match URLs that the plugin is
+	# *potentially* interested in. Any URL matching this regexp
+	# will cause your parser to be invoked. Currently, this will
+	# require fork()ing a process, so you should try to reduce the
+	# number of false positives by making your regexp as restrictive as
+	# possible. If it is not possible to determine whether or not your plugin is
+	# interested purely on the basis of the URL, you will have a  chance
+	# to refine this decision in your code. For now, try to make a
+	# reasonable approximation - like, check for URLs on the right hostname
+	# Note: Some universities provide mirrors of commericial publishers' sites
+	# with different hostnames, so you should provide some leeway in your
+	# regexp if that applies to you.
+
+	regexp {http://www.anthrosource.net/doi/(abs|pdf|pdfplus)/10.1525/(.*)}
+
+}
+
+
+#
+# Linkout formatting
+#
+
+# CiteULike doesn't store URLs for articles.
+# Instead it stores the raw ingredients required to build the
+# dynamically.
+# Each plugin is required to define a small procedure which does this
+# formatting
+# See the HOWTO file for more details.
+#
+# The variables following variables are defined for your use
+# in the function: type ikey_1 ckey_1 ikey_2 ckey_2
+#
+format_linkout ANTH {
+
+	return [list "Anthrosource" 
+			"http://www.anthrosource.net/doi/pdf/${ckey_1}"
+		   ]																 }
+#
+# TESTS
+#
+
+# Each plugin MUST provide a set of tests. The motivation behind this is
+# that web scraping code is inherently fragile, and is likely to break
+# whenever the provider decides to redisign their site. CiteULike
+# willperiodically run tests to see if anything has broken.
+
+# Please provide as comprehensive a set of tests as possible.
+# If you ever fix a bug in the parser, it is highly recommended that
+# you add the offending page as a test case.
+
+
+test {http://www.anthrosource.net/doi/pdfplus/10.1525/em.1972.1.1.1} {
+	formatted_url  {DOI http://dx.doi.org/10.1525/em.1972.1.1.1}
+	linkout        {DOI {} 10.1525/em.1972.1.1.1 {} {}}
+	author	       {Carmack Robert RM {Carmack, Robert M.}}
+	title	       {El Mensajero}
+	journal	       {El Mensajero}
+	volume	       {1}
+	issue	       1
+	start_page     1
+	end_page       12
+	year	       1972
+	type	       JOUR
+	url	       http://www.anthrosource.net/doi/abs/10.1525/em.1972.1.1.1
+	status	       ok
+}
+
+test {http://www.anthrosource.net/doi/abs/10.1525/can.2005.20.2.185} {
+	formatted_url  {DOI http://dx.doi.org/10.1525/can.2005.20.2.185}
+	linkout	       {DOI {} 10.1525/can.2005.20.2.185 {} {}}
+	author	       {Kelty Christopher C {Kelty, Christopher}}
+	title	       {Geeks, Social Imaginaries, and Recursive Publics}
+	journal	       {Cultural Anthropology}
+	volume	       {20}
+	issue	       {2}
+	start_page     {185}
+	end_page       {214}
+	year	       {2005}
+	type	       {JOUR}
+	url	       http://www.anthrosource.net/doi/abs/10.1525/can.2005.20.2.185
+	abstract       {This article investigates the social, technical, and legal affiliations among "geeks" (hackers, lawyers, activists, and IT entrepreneurs) on the Internet. The mode of association specific to this group is that of a "recursive public sphere" constituted by a shared imaginary of the technical and legal conditions of possibility for their own association. On the basis of fieldwork conducted in the United States, Europe, and India, I argue that geeks imagine their social existence and relations as much through technical practices (hacking, networking, and code writing) as through discursive argument (rights, identities, and relations). In addition, they consider a "right to tinker" a form of free speech that takes the form of creating, implementing, modifying, or using specific kinds of software (especially Free Software) rather than verbal discourse.}
+	status		   ok
+}
+
+test {http://www.anthrosource.net/doi/abs/10.1525/ae.2004.31.4.461} {
+	formatted_url   {DOI http://dx.doi.org/10.1525/ae.2004.31.4.461}
+	linkout		{DOI {} 10.1525/ae.2004.31.4.461 {} {}}
+	author      {Feld Steven S {Feld, Steven}}
+	author      {Brenneis Donald D {Brenneis, Donald}}
+	title		{Doing anthropology in sound}
+	journal		{American Ethnologist}
+	type		{JOUR}
+	volume		{31}
+	issue		{4}
+	start_page	{461}
+	end_page	{474}
+	year		{2004}
+	url		http://www.anthrosource.net/doi/abs/10.1525/ae.2004.31.4.461
+	abstract    {Sound has come to have a particular resonance in many disciplines over the past decade. Social theorists, historians, literary researchers, folklorists, and scholars in science and technology studies and visual, performative, and cultural studies provide a range of substantively rich accounts and epistemologically provocative models for how researchers can take sound seriously. This conversation explores general outlines of an anthropology of sound. Its main focus, however, is on the issues involved in using sound as a primary medium for ethnographic research.}
+	status      ok
+}
+
+test {http://www.anthrosource.net/doi/abs/10.1525/ae.2004.31.4.530?prevSearch=allfield%3A%28apple%29} {
+	formatted_url {DOI http://dx.doi.org/10.1525/ae.2004.31.4.530}
+	linkout       {DOI {} 10.1525/ae.2004.31.4.530 {} {}}
+	volume        31
+	year          2004
+	type          JOUR
+	start_page    530
+	end_page      551
+	url           http://www.anthrosource.net/doi/abs/10.1525/ae.2004.31.4.530
+	issue         4
+	title         {Open towns and manipulated indebtedness among agricultural workers in the New South}
+	journal       {American Ethnologist}
+	abstract      {Reselling consumable commodities like food, alcohol, and cigarettes to agricultural workers has long been a strategy of control and indebtedness used by North American labor bosses to manage workers in situations of demanding and risky work. Recent inclusion of crack cocaine among advanced commodities has brought new risks for workers, as it has permitted them a precarious means to enter a once-restricted resale domain, and it has altered strategies of control and profit by labor contractors by conferring a veneer of independence on workers. Discussion emphasizes an inside view of crack distribution amidst the shifting agencies and counteragencies between labor and management.}
+	author       {Bletzer Keith KV {Bletzer, Keith V.}}
+	status        ok
+}

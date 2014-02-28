@@ -1,0 +1,156 @@
+#
+# Copyright (c) 2008 Richard Cameron, CiteULike.org
+# All rights reserved.
+#
+# This code is derived from software contributed to CiteULike.org
+# by
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. All advertising materials mentioning features or use of this software
+#    must display the following acknowledgement:
+#        This product includes software developed by
+#		 CiteULike <http://www.citeulike.org> and its
+#		 contributors.
+# 4. Neither the name of CiteULike nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY CITEULIKE.ORG AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+
+
+#
+# Function to encode URL compenents
+# NOTE: not utf-8 safe unless indicated.
+#
+
+package require uri
+
+namespace eval cul::url {
+
+	proc _init {} {
+		for {set i 0} {$i < 256} {incr i} {
+			set c [format %c $i]
+			if {![string match {[-._~a-zA-Z0-9]} $c]} {
+				set cmap($c) %[format %2X $i]
+			}
+			if {![string match {[-_.!~*'()A-Za-z0-9;,/?:@&=+$]} $c]} {
+				set curimap($c) %[format %2X $i]
+			}
+			if {![string match {[-_.!~*'()A-Za-z0-9]} $c]} {
+				set curicompmap($c) %[format %2X $i]
+			}
+		}
+		set cmap(\n)       %0D%0A
+		set curimap(\n)     %0D%0A
+		set curicompmap(\n) %0D%0A
+
+		variable charmap    [array get cmap]
+		variable urimap     [array get curimap]
+		variable uricompmap [array get curicompmap]
+	}
+	_init
+
+	proc encode {urlcomponent} {
+		variable charmap
+		return [string map $charmap $urlcomponent]
+	}
+
+	proc decode {urlcomponent} {
+		set urlcomponent [string map [list + { } "\\" "\\\\"] $urlcomponent]
+		regsub -all -- {%([A-Fa-f0-9][A-Fa-f0-9])} $urlcomponent {\\u00\1} urlcomponent
+		return [subst -novar -nocommand $urlcomponent]
+	}
+
+	proc encodeURI {uri} {
+		variable urimap
+		return [string map $urimap $uri]
+	}
+
+	proc encodeURIComponent {uricomp} {
+		variable uricompmap
+		return [string map $uricompmap $uricomp]
+	}
+
+	# These below do UTF-8 URIencode/decode properly
+	proc decodeUTF8 {url} {
+		set text ""
+		set url [string map [list + { }] $url]
+		while {[string length $url]} {
+			if [regexp {^%([0-9a-fA-F][0-9a-fA-F])(.*)} $url _ hex url] {
+				scan $hex %x i
+				append text [format %c $i]
+				continue
+			}
+			if [regexp {^(.)(.*)} $url _ byte url] {
+				append text $byte
+				continue
+			}
+		}
+		return [encoding convertfrom utf-8 $text]
+	}
+
+	proc encodeURIComponentUTF8 {text} {
+		set url ""
+		foreach byte [split [encoding convertto utf-8 $text] ""] {
+			scan $byte %c i
+			if {[string match {[%<>"]} $byte] || $i <= 32 || $i > 127} {
+				append url [format %%%02X $i]
+			} else {
+				append url $byte
+			}
+		}
+		return $url
+	}
+
+
+	# strip off the query string
+	proc strip_qs {url} {
+		array set parts [uri::split $url]
+		set parts(query) {}
+		return [eval uri::join [array get parts]]
+	}
+
+	# remove any known dud query string params, e.g., google "utm_..."
+	proc cleanup_qs {url} {
+		# scheme, host, port, path, query, fragment
+		array set parts [uri::split $url]
+
+		if {[info exists parts(query)] && $parts(query) ne ""} {
+			set q [list]
+			foreach p [split $parts(query) "&"] {
+				if {[string first "utm_" $p] == 0} {
+					# pass
+				} else {
+					lappend q $p
+				}
+			}
+			set parts(query) [join $q "&"]
+		}
+
+		set ret [eval uri::join [array get parts]]
+		return $ret
+	}
+}
+
+if {[info exists ::argv0] && [file tail $::argv0] eq [info script]} {
+	puts [cul::url::cleanup_qs "http://www.citeulike.org/?a=b&a=x%20y"]
+	puts [cul::url::cleanup_qs "http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0037961?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+plosone%2FPLoSONE+%28PLoS+ONE+Alerts%3A+New+Articles%29"]
+}

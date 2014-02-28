@@ -1,0 +1,112 @@
+#
+# Copyright (c) 2014 CiteULike.org
+# All rights reserved.
+#
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. All advertising materials mentioning features or use of this software
+#    must display the following acknowledgement:
+#        This product includes software developed by
+#		 CiteULike <http://www.citeulike.org> and its
+#		 contributors.
+# 4. Neither the name of CiteULike nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY CITEULIKE.ORG AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+
+# Each plugin needs a description so the driver can advertise the details
+# to the users on the site
+plugin {
+	# Integer version number for the plugin code. When this number is incremented,
+	# CiteULike may reparse all existing articles with the new code.
+	version {1}
+
+	# The name of the plugin, as displayed on the "CiteULike supports..." page
+	name {AIP Scitation}
+
+	# The link the front page of this service
+	url {http://scitation.aip.org}
+
+	# Any additional information which needs to be displayed to the user.
+	# E.g. "Experimental support"
+	blurb {}
+
+	# Your name
+	author {Fergus Gallagher}
+
+	# Your email address
+	email {fergus@citeulike.org}
+
+	# Language you wrote the plugin in
+	language {python}
+
+	# Regular expression to match URLs that the plugin is
+	# *potentially* interested in. Any URL matching this regexp
+	# will cause your parser to be invoked. Currently, this will
+	# require fork()ing a process, so you should try to reduce the number
+	# of false positives by making your regexp as restrictive as possible.
+	#
+	# If it is not possible to determine whether or not your plugin is
+	# interested purely on the basis of the URL, you will have a chance
+	# to refine this decision in your code. For now, try to make a reasonable
+	# approximation - like, check for URLs on the right hostname
+	#
+	# Note: Some universities provide mirrors of commericial publishers' sites
+	# with different hostnames, so you should provide some leeway in your
+	# regexp if that applies to you.
+	
+	# SEG  *might* now be using atypon. There's a separate atypon plugin for 
+	#  ...seg.org/doi/....
+	regexp {scitation.aip.org}
+}
+
+
+#
+# Linkout formatting
+#
+# Jan 2013.  These old-style links are now obsolete - they all now redirect to a http://scitation.aip.org page
+# The new plugin doesn't attempt to reconstruct these - just uses the DOI.
+#
+
+format_linkout AIP {
+	return [list "Scitation (AIP)" \
+				"http://scitation.aip.org/getabs/servlet/GetabsServlet?prog=normal&id=${ckey_1}&idtype=cvips&gifs=yes" ]
+}
+format_linkout APS {
+	return [list "APS Permanent Link" \
+				"http://link.aps.org/abstract/${ckey_1}/v${ikey_1}/${ckey_2}" ]
+}
+format_linkout AIPP {
+	#format: Note--The AIP Resolver is buggy--some of these may cop out but it's not my fault
+	return [list "Scitation (AIP) (Permanent Link)" \
+				"http://link.aip.org/link/\?${ckey_1}/${ikey_1}/${ckey_2}" ]
+}
+
+
+#
+# TESTS
+#
+
+test {http://scitation.aip.org/content/aapm/journal/medphys/38/12/10.1118/1.3661998} {
+	status ok
+}
+

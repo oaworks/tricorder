@@ -1,0 +1,103 @@
+plugin {
+	version {1}
+	name {EdITLib Digitial Library}
+	url {http://editlib.org/}
+	blurb {}
+	author {Jordan Reiter}
+	email {jordan@aace.org}
+	language {python}
+	regexp {editlib.org}
+	use_crossref 0
+}
+
+#
+# Linkout formatting
+#
+
+# CiteULike doesn't store URLs for articles.
+# Instead it stores the raw ingredients required to build the dynamically.
+# Each plugin is required to define a small procedure which does this formatting
+# See the HOWTO file for more details.
+#
+# The variables following variables are defined for your use
+# in the function: type ikey_1 ckey_1 ikey_2 ckey_2
+#
+format_linkout EdIT {
+        return [list "EdIT" "http://editlib.org/p/${ikey_1}"]
+}
+
+
+test {http://www.editlib.org/index.cfm?fuseaction=Reader.ViewAbstract&paper_id=19977} {
+	formatted_url {EdIT http://editlib.org/p/19977}
+	linkout {EdIT 19977 {} {} {}}
+	volume 15
+	year 2007
+	start_page 23
+	type JOUR
+	end_page 38
+	url {http://www.editlib.org/p/19977}
+	publisher AACE
+	issue 1
+	title {Improving Undergraduate Computer Instruction: Experiments and Strategies}
+	journal {AACE Journal}
+	status ok
+	abstract {Today, undergraduate students enter college with increasingly more sophisticated computer skills compared to their counterparts of 20 years ago. However, many instructors are still using traditional instructional modes and methods to teach this new generation of student. This research study discusses a number of instructional strategies that were employed to teach a college-level introductory computer literacy class. The strategies included a hands-on computer skills assessment, the introduction of a flexible attendance policy, elimination of the required textbook, and the use of learning teams. We explored alternative teaching methodologies in an effort to close the gap between classroom practice and real-world application while improving student satisfaction and learning outcomes.}
+	cite KalmaEllis2007ex
+	issn 1065-6901
+	author {Kalman Howard H {Howard Kalman}}
+	author {Ellis Maureen M {Maureen Ellis}}
+	address {Chesapeake, VA}
+	plugin editlib_new
+	plugin_version 1
+	status ok
+}
+
+test {http://editlib.org/p/24218} {
+	formatted_url {EdIT http://editlib.org/p/24218}
+	linkout {EdIT 24218 {} {} {}}
+	volume 7
+	year 2007
+	month December
+	start_page 245
+	type JOUR
+	end_page 255
+	url {http://www.editlib.org/p/24218}
+	publisher AACE
+	issue 4
+	title {Pre-Service English Teachers and Technology: A Consideration of Weblogs for the English Classroom}
+	journal {Contemporary Issues in Technology and Teacher Education}
+	status ok
+	abstract {Teaching with technology is a complex issue, at best, bound by issues of access, funding, support and time for both students and teachers (Young & Bush, 2004). When English teachers effectively integrate technology into their classrooms, however, they have the opportunity to positively engage students in the learning process. Considering the specific technology of weblogs, this article will explore the need for preservice teachers to construct a working pedagogy that includes the use of technology within the content area for teaching and learning.}
+	cite Shoffner2007oq
+	issn  1528-5804
+	author {Shoffner Melanie M {Melanie Shoffner}}
+	plugin editlib_new
+	plugin_version 1
+	status ok
+}
+
+
+test {http://www.editlib.org/p/5082} {
+	formatted_url {EdIT http://editlib.org/p/5082}
+	linkout {EdIT 5082 {} {} {}}
+	volume 4
+	year 2005
+	start_page 299
+	type JOUR
+	end_page 315
+	url http://www.editlib.org/p/5082
+	publisher AACE
+	address {Norfolk, VA}
+	issue 3
+	title {Towards a model for m-learning in Africa}
+	journal {International Journal on E-Learning}
+	status ok
+	abstract {Mobile learning (m-learning) is a natural extension of electronic learning (e-learning) and has the potential to make learning even more widely available and accessible than we are used to in existing e-learning environments. The role that communication and interaction plays in the learning process is a critical success factor. It is within this context that m-learning can contribute to the quality of education. It offers opportunities the optimization of interaction between lecturers and learners, among learners, and among members of communities of practice (COPs). Wireless and mobile technologies also make it possible to provide learning opportunities to learners that are either without infrastructure for access (example rural learners) or continually on the move (example business professionals). This article shares the latest developments regarding a m-learning project in Africa and proposes a model for the implementation of m-learning in higher education in developing countries.}
+	cite Brown2005x6
+	issn 1537-2456
+	author {Brown Tom TH {Tom H. Brown}}
+	plugin editlib_new
+	plugin_version 1
+	status ok
+}
+

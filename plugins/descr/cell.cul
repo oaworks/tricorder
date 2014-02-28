@@ -1,0 +1,150 @@
+#
+# Copyright (C) 2005 Richard Cameron, CiteULike.org
+# All rights reserved.
+#
+# This code is derived from software contributed to CiteULike.org
+# by
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. All advertising materials mentioning features or use of this software
+#    must display the following acknowledgement:
+#        This product includes software developed by
+#		 CiteULike <http://www.citeulike.org> and its
+#		 contributors.
+# 4. Neither the name of CiteULike nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY CITEULIKE.ORG AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+
+# Each plugin needs a description so the driver can advertise the details
+# to the users on the site
+plugin {
+	# Integer version number for the plugin code. When this number is incremented,
+	# CiteULike may reparse all existing articles with the new code.
+	version {1}
+
+	# The name of the plugin, as displayed on the "CiteULike supports..." page
+	name {Cell}
+
+	# The link the front page of this service
+	url {http://www.cell.com}
+
+	# Any additional information which needs to be displayed to the user.
+	# E.g. "Experimental support"
+	blurb {}
+
+	# Your name
+	author {Fergus Gallagher}
+
+	# Your email address
+	email {fergus@citeulike.org}
+
+	# Language you wrote the plugin in
+	language {perl}
+
+	# Regular expression to match URLs that the plugin is
+	# *potentially* interested in. Any URL matching this regexp
+	# will cause your parser to be invoked. Currently, this will
+	# require fork()ing a process, so you should try to reduce the number
+	# of false positives by making your regexp as restrictive as possible.
+	#
+	# If it is not possible to determine whether or not your plugin is
+	# interested purely on the basis of the URL, you will have a chance
+	# to refine this decision in your code. For now, try to make a reasonable
+	# approximation - like, check for URLs on the right hostname
+	#
+	# Note: Some universities provide mirrors of commericial publishers' sites
+	# with different hostnames, so you should provide some leeway in your
+	# regexp if that applies to you.
+	#
+
+	# CELL itself is http://www.cell.com/abstract/xxxxx
+	# Other are http://www.cell.com/journalname/abstract/xxxxx
+	regexp {http://www\.cell\.com/([^/]+/)*?abstract/.*}
+}
+
+
+#
+# Linkout formatting
+#
+
+# CiteULike doesn't store URLs for articles.
+# Instead it stores the raw ingredients required to build the dynamically.
+# Each plugin is required to define a small procedure which does this formatting
+# See the HOWTO file for more details.
+#
+# The variables following variables are defined for your use
+# in the function: type ikey_1 ckey_1 ikey_2 ckey_2
+#
+format_linkout CELL {
+	return [list "Cell"  "http://www.cell.com/${ckey_1}/abstract/${ckey_2}"]
+}
+
+
+#
+# TESTS
+#
+
+# Each plugin MUST provide a set of tests. The motivation behind this is
+# that web scraping code is inherently fragile, and is likely to break whenever
+# the provider decides to redisign their site. CiteULike will periodically
+# run tests to see if anything has broken.
+
+# Please provide as comprehensive a set of tests as possible.
+# If you ever fix a bug in the parser, it is highly recommended that
+# you add the offending page as a test case.
+
+#
+# This is the RIS test (break with BibTeX - so delete when stable)
+#
+test {http://www.cell.com/trends/cognitive-sciences/abstract/S1364-6613%2808%2900235-0} {
+	linkout {CELL {} cognitive-sciences {} S1364-6613(08)00235-0}
+	linkout {DOI {} 10.1016/j.tics.2008.10.001 {} {}}
+	formatted_url {Cell http://www.cell.com/cognitive-sciences/abstract/S1364-6613(08)00235-0}
+	formatted_url {DOI http://dx.doi.org/10.1016/j.tics.2008.10.001}
+	year 2008
+	month 12
+	day 1
+	volume 12
+	serial 1364-6613
+	type JOUR
+	start_page 455
+	url http://linkinghub.elsevier.com/retrieve/pii/S1364661308002350
+	end_page 460
+	doi 10.1016/j.tics.2008.10.001
+	id S1364-6613(08)00235-0
+	publisher {Elsevier Science,}
+	issue 12
+	title {Understanding evaluation of faces on social dimensions}
+	journal {Trends Cogn Sci}
+	abstract {People reliably and automatically make personality inferences from facial appearance despite little evidence for their accuracy. Although such inferences are highly inter-correlated, research has traditionally focused on studying specific traits such as trustworthiness. We advocate an alternative, data-driven approach to identify and model the structure of face evaluation. Initial findings indicate that specific trait inferences can be represented within a 2D space defined by valence/trustworthiness and power/dominance evaluation of faces. Inferences along these dimensions are based on similarity to expressions signaling approach or avoidance behavior and features signaling physical strength, respectively, indicating that trait inferences from faces originate in functionally adaptive mechanisms. We conclude with a discussion of the potential role of the amygdala in face evaluation.}
+	author {Todorov Alexander A {Todorov, Alexander}}
+	author {Said Chris CP {Said, Chris P.}}
+	author {Engell Andrew AD {Engell, Andrew D.}}
+	author {Oosterhof Nikolaas NN {Oosterhof, Nikolaas N.}}
+	status ok
+}
+
+
+
+
+

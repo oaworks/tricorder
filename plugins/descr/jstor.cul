@@ -1,0 +1,207 @@
+#
+# Copyright (c) 2005 Richard Cameron, CiteULike.org
+# All rights reserved.
+#
+# This code is derived from software contributed to CiteULike.org
+# by
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. All advertising materials mentioning features or use of this software
+#    must display the following acknowledgement:
+#        This product includes software developed by
+#		 CiteULike <http://www.citeulike.org> and its
+#		 contributors.
+# 4. Neither the name of CiteULike nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY CITEULIKE.ORG AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+
+# Each plugin needs a description so the driver can advertise the details
+# to the users on the site
+plugin {
+	# Integer version number for the plugin code. When this number is incremented,
+	# CiteULike may reparse all existing articles with the new code.
+	version {3}
+
+	# The name of the plugin, as displayed on the "CiteULike supports..." page
+	name {JSTOR}
+
+	# The link the front page of this service
+	url {http://www.jstor.org}
+
+	# Any additional information which needs to be displayed to the user.
+	# E.g. "Experimental support"
+	blurb {}
+
+	# Your name
+	author {Richard Cameron}
+
+	# Your email address
+	email {richard@citeulike.org}
+
+	# Language you wrote the plugin in
+	language {python}
+
+	# Regular expression to match URLs that the plugin is
+	# *potentially* interested in. Any URL matching this regexp
+	# will cause your parser to be invoked. Currently, this will
+	# require fork()ing a process, so you should try to reduce the number
+	# of false positives by making your regexp as restrictive as possible.
+	#
+	# If it is not possible to determine whether or not your plugin is
+	# interested purely on the basis of the URL, you will have a chance
+	# to refine this decision in your code. For now, try to make a reasonable
+	# approximation - like, check for URLs on the right hostname
+	#
+	# Note: Some universities provide mirrors of commericial publishers' sites
+	# with different hostnames, so you should provide some leeway in your
+	# regexp if that applies to you.
+	regexp {^https?:.*jstor.org.*}
+}
+
+
+#
+# Linkout formatting
+#
+
+# CiteULike doesn't store URLs for articles.
+# Instead it stores the raw ingredients required to build the dynamically.
+# Each plugin is required to define a small procedure which does this formatting
+# See the HOWTO file for more details.
+#
+# The variables following variables are defined for your use
+# in the function: type ikey_1 ckey_1 ikey_2 ckey_2
+#
+format_linkout JSTR2 {
+	return [list "JSTOR" \
+		"http://www.jstor.org/stable/$ikey_1" ]
+}
+
+
+#
+# TESTS
+#
+
+# Each plugin MUST provide a set of tests. The motivation behind this is
+# that web scraping code is inherently fragile, and is likely to break whenever
+# the provider decides to redisign their site. CiteULike will periodically
+# run tests to see if anything has broken.
+
+# Please provide as comprehensive a set of tests as possible.
+# If you ever fix a bug in the parser, it is highly recommended that
+# you add the offending page as a test case.
+
+test {http://www.jstor.org/action/showArticle?doi=10.2307/307641&Search=yes&term=bulgakov%27s&term=moon&term=may&term=eve&term=full&term=good&term=margarita&term=friday&term=master&term=note&item=1&returnArticleService=showArticle&ttl=5&searchUri=%2Faction%2FdoBasicSearch%3FQuery%3DA%2BNote%2Bon%2BMay%2BEve%252C%2BGood%2BFriday%252C%2Band%2Bthe%2BFull%2BMoon%2Bin%2BBulgakov%2527s%2BThe%2BMaster%2Band%2BMargarita%26dc%3DAll%2BDisciplines} {
+	formatted_url {JSTOR http://www.jstor.org/stable/307641}
+	formatted_url {DOI http://dx.doi.org/10.2307/307641}
+	linkout {JSTR2 307641 {} {} {}}
+	linkout {DOI {} 10.2307/307641 {} {}}
+	volume 28
+	month 24
+	year 1984
+	issue 4
+	author {Fiene Donald DM {Fiene, Donald M.}}
+	title {A Note on May Eve, Good Friday, and the Full Moon in Bulgakov's The Master and Margarita}
+	start_page 533
+	journal {The Slavic and East European Journal}
+	type JOUR
+	publisher {American Association of Teachers of Slavic and East European Languages AATSEEL of the U.S., Inc.}
+	use_crossref 1
+	doi 10.2307/307641
+	issn 00376752
+	status ok
+}
+
+
+
+test {http://www.jstor.org/stable/view/2580820?seq=1} {
+	formatted_url {JSTOR http://www.jstor.org/stable/2580820}
+	linkout {JSTR2 2580820 {} {} {}}
+	volume 31
+	year 1980
+	issue 6
+	author {Tomlinson Rolfe R {Rolfe Tomlinson}}
+	title {Doing Something about the Future}
+	start_page 467
+	end_page 476
+	journal {The Journal of the Operational Research Society}
+	type JOUR
+	abstract {This paper is concerned with the need for more interdisciplinary, systems oriented, research directed towards major problems encountered by decision makers in industry and government; a need which is more difficult to meet in the face of traditional methods of organising knowledge and research. It emphasises the need to acknowledge the true complexity of the problems and the interactive nature of any effective research procedure. As an illustration, both of the need and the problems involved in meeting it, the development of a new program of research into problems of Management and Technology at the International Institute of Applied Systems Analysis, which is supported by seventeen nations of all political complexions, is analysed. The implication is that we can do something about the future, but we must be prepared to do.}
+	url {http://www.jstor.org/stable/2580820}
+	publisher {Palgrave Macmillan Journals on behalf of the Operational Research Society}
+	issn 01605682
+	status ok
+}
+
+#
+#  SKIP - not a valid DOI.
+#
+skiptest {http://www.jstor.org/action/showArticle?doi=10.2307/187568} {
+	formatted_url {JSTOR http://www.jstor.org/stable/187568}
+	formatted_url {DOI http://dx.doi.org/10.2307/187568}
+	linkout {JSTR2 187568 {} {} {}}
+	linkout {DOI {} 10.2307/187568 {} {}}
+	volume 50
+	year 1983
+	issue 4
+	author {Shrader Douglas D {Douglas Shrader}}
+	title {Review: [Scientific Knowledge: Causation, Explanation, and Corroboration]}
+	start_page 660
+	end_page 662
+	journal {Philosophy of Science}
+	type JOUR
+	url {http://www.jstor.org/stable/187568}
+	publisher {The University of Chicago Press on behalf of the Philosophy of Science Association}
+	status ok
+}
+
+
+test {http://www.jstor.org/action/showArticle?doi=10.2307/2703147} {
+	formatted_url {JSTOR http://www.jstor.org/stable/2703147}
+	formatted_url {DOI http://dx.doi.org/10.2307/2703147}
+	linkout {JSTR2 2703147 {} {} {}}
+	linkout {DOI {} 10.2307/2703147 {} {}}
+	volume 20
+	year 1992
+	issue 3
+	type JOUR
+	author {Masur Louis LP {Masur, Louis P.}}
+	author {Kammen Michael M {Kammen, Michael}}
+	start_page 291
+	title {You Must Remember this}
+	journal {Reviews in American History}
+	publisher {Johns Hopkins University Press}
+	use_crossref 1
+	doi 10.2307/2703147
+	issn 00487511
+	month 09
+	status ok
+}
+
+
+
+
+
+
+
+
+

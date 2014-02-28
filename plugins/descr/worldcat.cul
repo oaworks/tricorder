@@ -1,0 +1,67 @@
+plugin {
+	version {1}
+	name {WorldCat}
+	url {http://www.worldcat.org}
+	blurb {}
+	author {Chris Hall}
+	email {plugins@citeulike.org}
+	language {python}
+	regexp {http://(www.)?worldcat.org.*/(isbn|oclc)/.+}
+}
+
+format_linkout WCAT {
+	set ret [list "WorldCat" "http://www.worldcat.org/oclc/${ckey_1}"]
+	if {$ckey_2 ne ""} {
+		lappend ret "Google Books" "http://books.google.com/books?isbn=${ckey_2}"
+		lappend ret "Amazon.com" "http://www.amazon.com/gp/search?keywords=${ckey_2}&index=books&linkCode=qs"
+	}
+	return $ret
+}
+
+test {http://www.worldcat.org/isbn/9781844630158} {
+	formatted_url {WorldCat http://www.worldcat.org/oclc/70119587}
+	formatted_url {{WorldCat (ISBN)} http://www.worldcat.org/isbn/9781844630158}
+	formatted_url {{Google Books} http://books.google.com/books?vid=ISBN9781844630158}
+	formatted_url {Amazon.com http://www.amazon.com/gp/search?keywords=9781844630158&index=books&linkCode=qs}
+	formatted_url {LibraryThing http://www.librarything.com/isbn/9781844630158}
+	linkout {WCAT {} 70119587 {} {}}
+	linkout {ISBN {} 9781844630158 {} {}}
+	serial {9781844630158 1844630153}
+	city {Sheffield; London}
+	year 2005
+	type BOOK
+	plugin_version 1
+	id 70119587
+	isbn 9781844630158
+	publisher {NHS Cancer Screening Programmes ; Royal College of Pathologists}
+	title {Pathology reporting of breast disease : a joint document incorporating the third edition of the NHS Breast Screening Programme's Guidelines for pathology reporting in breast cancer screening and the second edition of the Royal College of Pathologists' Minimum dataset for breast cancer histopathology.}
+	status ok
+	author {Ellis {} IO {Ellis, I. O.}}
+	author {{NHS Cancer Screening Programmes} {} {} {NHS Cancer Screening Programmes.}}
+	author {{Royal College of Pathologists} {} {} {Royal College of Pathologists.}}
+	plugin worldcat
+}
+
+test {http://www.worldcat.org/oclc/52821313} {
+	formatted_url {WorldCat http://www.worldcat.org/oclc/52821313}
+	formatted_url {{WorldCat (ISBN)} http://www.worldcat.org/isbn/9783540404606}
+	formatted_url {{Google Books} http://books.google.com/books?vid=ISBN9783540404606}
+	formatted_url {Amazon.com http://www.amazon.com/gp/search?keywords=9783540404606&index=books&linkCode=qs}
+	formatted_url {LibraryThing http://www.librarything.com/isbn/9783540404606}
+	linkout {WCAT {} 52821313 {} {}}
+	linkout {ISBN {} 9783540404606 {} {}}
+	serial {3540404600  9783540404606}
+	city {Berlin; New York}
+	year 2004
+	type BOOK
+	plugin_version 1
+	id 52821313
+	isbn 9783540404606
+	publisher Springer
+	title {Proofs from the book}
+	status ok
+	author {Aigner Martin M {Aigner, Martin}}
+	author {Ziegler Günter GM {Ziegler, Günter M.}}
+	plugin worldcat
+}
+
